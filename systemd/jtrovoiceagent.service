@@ -1,0 +1,15 @@
+[Unit]
+Description=JTRO Offline Voice Agent
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Dev/jtrovoiceagent
+ExecStart=%h/Dev/jtrovoiceagent/scripts/run_agent.sh %h/Dev/jtrovoiceagent/configs/config.example.yaml
+Restart=on-failure
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target

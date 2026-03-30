@@ -1,0 +1,64 @@
+app_name: jtrovoiceagent
+
+audio:
+  device: null
+  sample_rate: 16000
+  channels: 1
+  block_duration_ms: 100
+  speech_threshold: 0.015
+  speech_prefix_ms: 300
+  silence_duration_ms: 900
+  min_utterance_ms: 700
+  max_utterance_ms: 12000
+  queue_maxsize: 256
+
+stt:
+  backend: faster-whisper
+  model_id: medium
+  local_model_path: null
+  language: bn
+  task: transcribe
+  beam_size: 5
+  vad_filter: true
+  vad_min_silence_ms: 500
+  device: auto
+  compute_type_cpu: int8
+  compute_type_cuda: float16
+  cpu_threads: null
+  cache_dir: ../models/cache/stt
+  temp_dir: ../models/cache/tmp
+
+translation:
+  enabled: true
+  backend: nllb
+  model_id: facebook/nllb-200-distilled-600M
+  source_lang: ben_Beng
+  target_lang: eng_Latn
+  device: auto
+  max_new_tokens: 256
+  num_beams: 4
+  cache_dir: ../models/cache/translation
+
+injection:
+  backend: auto
+  xdotool_command: xdotool
+  ydotool_command: ydotool
+  ydotool_socket: null
+  typing_delay_ms: 8
+  dry_run: false
+  fallback_to_dry_run: true
+  preserve_newlines: false
+
+daemon:
+  control_socket_path: ~/.local/state/jtrovoiceagent/control.sock
+  state_dir: ~/.local/state/jtrovoiceagent
+  start_listening: false
+  idle_sleep_ms: 200
+
+logging:
+  level: INFO
+  directory: ../logs
+  filename: agent.log
+  rotate_bytes: 1048576
+  backups: 5
+  console: true
