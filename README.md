@@ -63,6 +63,12 @@ models/cache/
 
 ## Setup
 
+The default example config is tuned for limited VRAM machines:
+
+- STT stays on `auto`, which uses CUDA when available
+- Translation defaults to CPU to avoid GPU OOM with NLLB on 8 GB cards
+- If you explicitly set translation to CUDA, the app falls back to CPU on CUDA OOM
+
 ### 1. System packages
 
 ```bash
@@ -97,6 +103,8 @@ voice-agent --config ./configs/config.example.yaml doctor
 ```
 
 The default configuration starts in a safe paused state.
+It also keeps translation on CPU by default, which is the safest option for machines where
+`faster-whisper` and NLLB do not fit in VRAM together.
 
 ### Enable listening
 
@@ -176,6 +184,7 @@ pytest
 
 - Bangla STT quality depends heavily on microphone quality, background noise, and chosen Whisper model size.
 - Translation adds noticeable latency on weaker CPUs.
+- Running both Whisper medium and NLLB 600M on CUDA may exceed 8 GB VRAM, so the default config keeps translation on CPU.
 - Wayland injection is fundamentally more restricted than X11.
 - The current VAD is energy based, not phoneme aware.
 - Global hotkeys are intentionally delegated to the desktop environment in Version-01.

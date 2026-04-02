@@ -34,7 +34,9 @@ translation:
   model_id: facebook/nllb-200-distilled-600M
   source_lang: ben_Beng
   target_lang: eng_Latn
-  device: auto
+  device: cpu
+  fallback_device: cpu
+  force_cpu: false
   max_new_tokens: 256
   num_beams: 4
   cache_dir: ../models/cache/translation

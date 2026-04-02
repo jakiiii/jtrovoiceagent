@@ -35,6 +35,8 @@ translation:
   source_lang: ben_Beng
   target_lang: eng_Latn
   device: cpu
+  fallback_device: cpu
+  force_cpu: true
   max_new_tokens: 192
   num_beams: 2
   cache_dir: ../models/cache/translation

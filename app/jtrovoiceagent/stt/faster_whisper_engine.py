@@ -20,6 +20,8 @@ class FasterWhisperSTTEngine(STTEngine):
         self.config = config
         self.logger = logging.getLogger("jtrovoiceagent.stt.faster_whisper")
         self._model: Any | None = None
+        self._device: str | None = None
+        self._compute_type: str | None = None
 
     def warmup(self) -> None:
         self._get_model()
@@ -89,6 +91,14 @@ class FasterWhisperSTTEngine(STTEngine):
             compute_type,
         )
         self._model = WhisperModel(model_ref, **kwargs)
+        self._device = device
+        self._compute_type = compute_type
+        self.logger.info(
+            "STT runtime ready model=%s effective_device=%s compute_type=%s",
+            model_ref,
+            self._device,
+            self._compute_type,
+        )
         return self._model
 
 

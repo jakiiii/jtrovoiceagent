@@ -14,6 +14,8 @@ stt:
   temp_dir: ./cache/tmp
 translation:
   cache_dir: ./cache/translation
+  fallback_device: cpu
+  force_cpu: true
 logging:
   directory: ./logs
 """,
@@ -25,3 +27,5 @@ logging:
     assert str(config.stt.cache_dir).startswith(str(tmp_path))
     assert str(config.translation.cache_dir).startswith(str(tmp_path))
     assert str(config.logging.directory).startswith(str(tmp_path))
+    assert config.translation.fallback_device == "cpu"
+    assert config.translation.force_cpu is True

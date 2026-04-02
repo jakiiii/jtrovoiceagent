@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
+import sys
 from pathlib import Path
 
 from jtrovoiceagent.audio.devices import list_input_devices
 from jtrovoiceagent.core.config import AppConfig, load_config
+from jtrovoiceagent.core.errors import ControlError
 from jtrovoiceagent.core.logging import configure_logging
 from jtrovoiceagent.core.runtime import detect_session_info, has_uinput_access, resolve_compute_device
 from jtrovoiceagent.daemon.control import send_control_command
@@ -56,7 +59,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "control":
-        response = send_control_command(Path(config.daemon.control_socket_path), args.action)
+        try:
+            response = send_control_command(Path(config.daemon.control_socket_path), args.action)
+        except ControlError as exc:
+            _print_control_error(exc, args.config, args.action)
+            return 1
         print(json.dumps(response, ensure_ascii=False, indent=2))
         return 0 if response.get("ok") else 1
 
@@ -104,3 +111,13 @@ def _print_doctor(config: AppConfig) -> None:
         "selected_injector": injector.__class__.__name__,
     }
     print(json.dumps(status, ensure_ascii=False, indent=2))
+
+
+def _print_control_error(error: ControlError, config_path: str, action: str) -> None:
+    print(str(error), file=sys.stderr)
+    print(
+        "Hint: the daemon must be running before "
+        f"`control {action}` can succeed. Start it with: "
+        f"voice-agent --config {shlex.quote(config_path)} run",
+        file=sys.stderr,
+    )

@@ -53,7 +53,9 @@ class TranslationConfig:
     model_id: str = "facebook/nllb-200-distilled-600M"
     source_lang: str = "ben_Beng"
     target_lang: str = "eng_Latn"
-    device: str = "auto"
+    device: str = "cpu"
+    fallback_device: str = "cpu"
+    force_cpu: bool = False
     max_new_tokens: int = 256
     num_beams: int = 4
     cache_dir: PathLike = Path("models/cache/translation")
@@ -147,8 +149,16 @@ def validate_config(config: AppConfig) -> None:
         raise ConfigurationError("audio.speech_threshold must be greater than 0")
     if config.stt.backend != "faster-whisper":
         raise ConfigurationError(f"Unsupported STT backend: {config.stt.backend}")
+    if config.stt.device not in {"auto", "cpu", "cuda"}:
+        raise ConfigurationError(f"Unsupported STT device: {config.stt.device}")
     if config.translation.enabled and config.translation.backend not in {"nllb", "identity"}:
         raise ConfigurationError(f"Unsupported translation backend: {config.translation.backend}")
+    if config.translation.device not in {"auto", "cpu", "cuda"}:
+        raise ConfigurationError(f"Unsupported translation device: {config.translation.device}")
+    if config.translation.fallback_device not in {"cpu", "cuda"}:
+        raise ConfigurationError(
+            f"Unsupported translation.fallback_device: {config.translation.fallback_device}"
+        )
     if config.injection.backend not in {"auto", "xdotool", "ydotool", "dry-run"}:
         raise ConfigurationError(f"Unsupported injection backend: {config.injection.backend}")
 
